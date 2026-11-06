@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>خطة التوجيهي – 1 إلى 19 نوفمبر</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--tx:#1d1d1b;--mu:#6b6a64;--bd:#e3e1d8;--ac:#1d6f5c;--am:#b45f06;--amb:#fdf0dc;--gy:#e8f1ff;--gyt:#1a4f9c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161715;--card:#222320;--tx:#ecebe6;--mu:#a09f97;--bd:#383934;--ac:#4cc1a4;--am:#f0a94a;--amb:#3a2c14;--gy:#17283f;--gyt:#8db8f5}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.7}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0}
+.sub{color:var(--mu);font-size:14px}
+.bar{height:10px;background:var(--bd);border-radius:6px;margin:12px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac);width:0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0}
+.card.today{border:2px solid var(--ac)}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.hd b{font-size:17px}
+.chip{font-size:12px;padding:2px 10px;border-radius:20px;background:var(--gy);color:var(--gyt)}
+.chip.c{background:var(--amb);color:var(--am)}
+.meta{color:var(--mu);font-size:13px;margin:4px 0 8px}
+label{display:flex;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--bd);cursor:pointer}
+label:first-of-type{border-top:0}
+input{width:20px;height:20px;accent-color:var(--ac);flex:none}
+label.done span{text-decoration:line-through;color:var(--mu)}
+.note{font-size:13px;background:var(--bd);border-radius:8px;padding:8px 10px;margin-top:8px}
+details{margin-top:8px;font-size:13px}
+summary{cursor:pointer;color:var(--ac)}
+ol{margin:6px 0;padding-inline-start:20px}
+.leg{font-size:13px;color:var(--mu)}
+</style></head><body><main>
+<h1>خطة التوجيهي: كل يوم وشو عليك</h1>
+<div class="sub">النسخة المحدثة من الثلاثاء 3 نوفمبر. أنجزت: 4 تكامل + حصة علوم أرض. المتأخر محسوب كله (مؤجلة): 12 تكامل، 4 مراجعة 6 و7، 20 فيزياء، 11 علوم أرض. الانتهاء 23 نوفمبر و24 احتياط، وبيضل 3 أسابيع قبل امتحان 15 ديسمبر.</div>
+<div class="bar"><i id="pb"></i></div><div class="sub" id="pt"></div>
+<p class="leg"><span class="chip">أصلية</span> من خطتك الأساسية &nbsp; <span class="chip c">مؤجلة</span> متأخرة من 30 أكتوبر حتى 2 نوفمبر (بتتنفذ أول ما تبدأ)</p>
+<div id="app"></div>
+<div class="card"><b>ترتيب اليوم (قاعدة ثابتة)</b>
+<ol><li>الاستيقاظ 7:00 والنوم 23:00 (8 ساعات)، والفجر لازم يكون بوقته.</li>
+<li>رياضيات الصبح، فيزياء بعد الغداء وبالمساء، علوم الأرض بين الجلسات أو بعد الجيم.</li>
+<li>الجيم بعد الرياضيات وحصتين فيزياء تقريبًا (بين العصر والمغرب)، ولا جيم صباحًا.</li>
+<li>استراحة 10 إلى 15 دقيقة بين كل حصتين، ومشي قصير بالاستراحات.</li>
+<li>المواقيت تقريبية، عدّلها حسب تطبيق الصلاة.</li></ol></div>
+</main>
+<script>
+const W=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const G=[0,3,4,6,7,9,11,13,14,16,18];
+const T=(t,k,m)=>({t,k,m});
+const rep=(n,f)=>Array.from({length:n},(_,i)=>f(i+1));
+const ph=(n,c)=>rep(n,i=>T('فيزياء '+i,'o',50)).concat(rep(c||0,()=>T('فيزياء إضافية','c',50)));
+const ea=(n,c)=>rep(n,i=>T('علوم أرض '+i,'o',20)).concat(rep(c||0,()=>T('علوم أرض إضافية','c',20)));
+const ints=n=>rep(n,i=>T('رياضيات: تكامل '+i,'o',60));
+const D=[];
+for(let i=0;i<0;i++){
+ let m,p,e,note='',ph_='';
+ if(i==0){m=ints(1);p=ph(2);e=ea(2);ph_='اليوم 3 – خفيف';
+  note='الجدول: 15:00 رياضيات ثم 16:15 جيم ثم 17:45 استحمام ووجبة، 18:05 فيزياء، 20:05 فيزياء، 21:05 علوم أرض، قرآن، نوم 23:00. الباقي من حصص اليوم (3 تكامل، مراجعة 6 و7، 3 فيزياء، حصة علوم أرض) انتقل للأيام القادمة.';}
+ else if(i<=2){m=ints(4).concat([T('رياضيات: مراجعة الوحدتين 6 و7','o',60)]);p=ph(5);e=ea(3);ph_='اليوم '+(i+3)+' – مرحلة 1';note='حمولة كاملة 10س10د. لا جيم اليوم عشان ما يتأخر النوم.';}
+ else if(i<=6){m=ints(4);p=ph(5);e=ea(3);ph_='اليوم '+(i+3)+' – مرحلة 2';}
+ else if(i<=9){m=[T('رياضيات: حل تكامل المتبقي والناقص','o',60),T('رياضيات: أسئلة الوحدتين 6 و7','o',60),T('رياضيات: تكامل','c',60),T('رياضيات: مراجعة 6 و7','c',60)];p=ph(5);e=ea(3);ph_='اليوم '+(i+3)+' – مرحلة 3';}
+ else if(i<=17){m=[T('رياضيات: تكامل','c',60),T('رياضيات: مراجعة نواقص الفصل الأول','o',60),T('رياضيات: نواقص الفصل الثاني ونقاط الضعف','o',60)];p=ph(5,1);e=ea(3,i<=16?1:0);ph_='اليوم '+(i+3)+' – مرحلة 4';}
+ else{m=[T('رياضيات: معالجة نقاط الضعف','o',60),T('رياضيات: استكمال غير المنجز','o',60)];p=ph(5,0).map(x=>T(x.t+' (مؤجلة)','c',50));e=[];ph_='يوم إضافي';note='آخر يوم تعويض. بعده 25 يوم للمراجعة الشاملة قبل 15 ديسمبر.';}
+ D.push({i,d:W[i%7]+' '+(i+1)+' نوفمبر',gym:G.includes(i),ph:ph_,note,t:[].concat(m,p,e)});
+}
+const G2=[4,5,7,8,11,12,14,15,18,19,21,22];
+let cM=12,cR=4,cP=20,cE=11;
+const mI=()=>T('رياضيات: تكامل',cM-->0?'c':'o',60);
+const mR=()=>T('رياضيات: مراجعة الوحدتين 6 و7',cR-->0?'c':'o',60);
+const X=t=>T('رياضيات: '+t,'o',60);
+for(let dt=3;dt<=24;dt++){
+ let m,ph_,note='';
+ if(dt<=7){m=rep(dt==3?1:2,mI).concat([mR()]);ph_='تكامل + مراجعة 6 و7';}
+ else if(dt<=14){m=rep(3,mI);ph_='تكامل';}
+ else if(dt==15){m=rep(2,mI).concat([X('استكمال الدروس والأسئلة غير المنجزة')]);ph_='تكامل';}
+ else if(dt<=18){m=[X('حل تكامل المتبقي والناقص'),X('أسئلة الوحدتين 6 و7'),X('أسئلة الوحدتين 6 و7 وتصحيحها')];ph_='أسئلة متبقية';}
+ else if(dt<=23){m=[X('مراجعة نواقص الفصل الأول'),X('مراجعة نواقص الفصل الثاني'),X('معالجة نقاط الضعف')];ph_='مراجعة';}
+ else{m=[X('تعويض أي حصة فائتة')];ph_='يوم احتياط';}
+ const p=dt==3?2:dt==4?4:dt<=22?5:dt==23?4:0;
+ const e=dt==3?2:dt==4?3:dt<=22?3:0;
+ if(dt==3)note='يوم رجوع خفيف. لو البداية صعبة اشتغل جلسات 25 دقيقة و5 استراحة. الموبايل برا الغرفة.';
+ if(dt==4)note='يوم متوسط. بعد كل حصتين استراحة 15 دقيقة.';
+ if(dt==24)note='يوم احتياط: عوّض أي حصة فاتتك، ولو خلصت كل شي ارتاح أو راجع نماذج سابقة.';
+ const t=m.concat(rep(p,i=>T('فيزياء '+i,cP-->0?'c':'o',50)),rep(e,i=>T('علوم أرض '+i,cE-->0?'c':'o',20)));
+ D.push({i:dt-1,d:W[(dt-1)%7]+' '+dt+' نوفمبر',gym:G2.includes(dt),ph:ph_,note,t});
+}
+let S={};try{S=JSON.parse(localStorage.getItem('plan2')||'{}')}catch(x){}
+function save(){try{localStorage.setItem('plan2',JSON.stringify(S))}catch(x){}}
+const fm=m=>Math.floor(m/60)+'س'+(m%60?(m%60)+'د':'');
+function render(){
+ const now=new Date();let td=0;
+ if(now.getFullYear()==2026&&now.getMonth()==10)td=Math.max(2,Math.min(23,now.getDate()-1));
+ else if(now.getFullYear()>2026||(now.getFullYear()==2026&&now.getMonth()>10))td=23;
+ let all=0,dn=0,h='';
+ D.forEach(d=>{
+  const min=d.t.reduce((a,x)=>a+x.m,0);
+  h+='<div class="card'+(d.i==td?' today':'')+'" id="d'+d.i+'"><div class="hd"><b>'+d.d+(d.i==td?' (اليوم)':'')+'</b><span class="chip">'+d.ph+'</span></div>';
+  h+='<div class="meta">دراسة '+fm(min)+' · '+(d.gym?'جيم اليوم 🏋️':'بدون جيم')+' · مشي 10 آلاف خطوة · نوم 23:00–7:00</div>';
+  d.t.forEach((x,j)=>{const k=d.i+'-'+j;all++;if(S[k])dn++;
+   h+='<label class="'+(S[k]?'done':'')+'"><input type="checkbox" data-k="'+k+'"'+(S[k]?' checked':'')+'><span>'+x.t+'</span><span class="chip'+(x.k=='c'?' c':'')+'">'+(x.k=='c'?'مؤجلة':'أصلية')+'</span></label>';});
+  if(d.gym)h+='<label class="'+(S['g'+d.i]?'done':'')+'"><input type="checkbox" data-k="g'+d.i+'"'+(S['g'+d.i]?' checked':'')+'><span>جيم 60 إلى 90 دقيقة (بعد الرياضيات)</span></label>';
+  if(d.note)h+='<div class="note">'+d.note+'</div>';
+  h+='</div>';});
+ document.getElementById('app').innerHTML=h;
+ document.getElementById('pb').style.width=(all?dn/all*100:0)+'%';
+ document.getElementById('pt').textContent='أنجزت '+dn+' من '+all+' مهمة';
+ document.querySelectorAll('input[data-k]').forEach(c=>c.onchange=()=>{S[c.dataset.k]=c.checked;save();const y=scrollY;render();scrollTo(0,y);});
+ return td;
+}
+const t0=render();if(t0>0)document.getElementById('d'+t0).scrollIntoView();
+</script></body></html>
